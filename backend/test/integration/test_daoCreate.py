@@ -6,6 +6,7 @@ from src.util.validators import getValidator
 
 
 @pytest.fixture
+# Pre define a 'jsonfile' for validation
 def jsonFile():
     return {
         "$jsonSchema": {
@@ -29,6 +30,11 @@ def jsonFile():
     }
 
 @pytest.fixture
-def daoObj():
+# DAO object, mocking the getValidator in __init__ with patch using the fixture above
+def daoObj(jsonFile):
+    patcher = patch('src.util.dao.getValidator', return_value=jsonFile)
+    patcher.start()
     dao = DAO("testuser")
+    patcher.stop()
     return dao
+

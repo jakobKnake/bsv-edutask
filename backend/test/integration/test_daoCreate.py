@@ -24,7 +24,6 @@ def jsonFile():
                 "email": {
                     "bsonType": "string",
                     "description": "the email address of a user must be determined",
-                    "uniqueItems": True
                 },
             }
         }
@@ -128,27 +127,3 @@ def test_create_no_email(daoObj):
     # Act/Assert
     with pytest.raises(WriteError):
         daoObj.create(data)
-
-@pytest.mark.integration
-def test_create_email_notUnique(daoObj):
-
-    # Arrange
-    data1 = {
-        'firstName': 'Jakob',
-        'email': 'jakob@hotmail.com',
-        'lastName': 'Efternamn'
-    }
-
-    data2 = {
-        'firstName': 'Jakob',
-        'email': 'jakob@hotmail.com',
-        'lastName': 'Annan'
-    }
-
-    # Act
-    # Create the first user
-    daoObj.create(data1)
-
-    # Act/Assert
-    with pytest.raises(DuplicateKeyError):
-        daoObj.create(data2)

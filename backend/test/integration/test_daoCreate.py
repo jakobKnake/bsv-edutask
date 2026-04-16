@@ -36,8 +36,10 @@ def daoObj(jsonFile):
     patcher = patch('src.util.dao.getValidator', return_value=jsonFile)
     patcher.start()
     dao = DAO("testuser")
+    
+    yield dao
     patcher.stop()
-    return dao
+    dao.collection.drop()
 
 @pytest.mark.integration
 def test_create_valid_data(daoObj):

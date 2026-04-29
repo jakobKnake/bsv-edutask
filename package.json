@@ -1,0 +1,27 @@
+{
+  "name": "bsv-edutask",
+  "version": "1.0.0",
+  "description": "[![GitHub](https://img.shields.io/github/license/JulianFrattini/edutask)](./LICENSE)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakobKnake/bsv-edutask.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jakobKnake/bsv-edutask/issues"
+  },
+  "homepage": "https://github.com/jakobKnake/bsv-edutask#readme",
+  "devDependencies": {
+    "cypress": "^15.14.2"
+  }
+}

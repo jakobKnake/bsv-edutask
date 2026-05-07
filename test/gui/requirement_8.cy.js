@@ -45,35 +45,51 @@ describe('R8UC 1-3', () => {
         cy.get('.todo-list li.todo-item').last().should('contain.text', todoText);
     });
 
-    /*
+
     //R8UC2: Toggle To-do
-    it('Item is struck through', () => {
+    it('Item is struck through when changed from Active to Done', () => {
+        const todoText = 'Buy printing paper';
 
-    })
+        cy.get('input[placeholder*="Add a new todo item"]').type(todoText,{ force: true });
+        cy.get('.popup-inner').find('input[type="submit"]').click({ force: true });
+        cy.contains('.todo-list li.todo-item', todoText).should('be.visible');
 
-    it('The item is not struck through anymore', () => {
+        cy.contains('.todo-list li.todo-item', todoText).find('.checker').click(); 
 
-    })*/
+        cy.contains('.todo-list li.todo-item', todoText).find('.editable').invoke('css', 'text-decoration').should('contain', 'line-through');
+    });
+
+    it('The item is not struck through when changed from Done to Active ', () => {
+        const todoText = 'Buy printing paper';
+
+        cy.get('input[placeholder*="Add a new todo item"]').type(todoText, { force: true });
+        cy.get('.popup-inner').find('input[type="submit"]').click({ force: true });
+        
+        cy.contains('.todo-list li.todo-item', todoText).find('.checker').click({ force: true });
+
+        cy.contains('.todo-list li.todo-item', todoText).find('.editable').invoke('css', 'text-decoration').should('contain', 'line-through');
+
+        cy.contains('.todo-list li.todo-item', todoText).find('.checker').click({ force: true });
+
+        cy.contains('.todo-list li.todo-item', todoText).find('.editable').invoke('css', 'text-decoration').should('not.contain', 'line-through');
+    });
+
     
     //R8UC3: Delete To-do
-    //Most likely a bug which prohibits the process of clicking desired element
     it('Todo item is removed from the todo list', () => {
         const todoText = 'Buy printing paper';
     
-        cy.get('input[placeholder*="Add a new todo item"]')
-        .click('top')
-        .type(todoText);
-        
-        cy.get('.popup-inner').find('input[type="submit"]').click();
+        cy.get('input[placeholder*="Add a new todo item"]').type(todoText,{ force: true });
+
+        cy.get('.popup-inner').find('input[type="submit"]').click({ force: true });
 
         cy.contains('.todo-list li.todo-item', todoText).should('be.visible');
 
-        cy.contains('.todo-item', todoText)
-        .find('.remover') 
-        .click();
+        cy.contains('.todo-item', todoText).find('.remover').click({ force: true }); 
+
+        cy.reload();
 
         cy.contains('.todo-list li.todo-item', todoText).should('not.exist');
-        })
-
-
-})
+        });
+        
+});

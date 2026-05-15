@@ -11,6 +11,12 @@ jobs:
   backend-test:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,6 +33,5 @@ jobs:
 
       - name: Run tests
         run: |
-          export PYTHONPATH=$PYTHONPATH:$(pwd)/backend
-          pytest backend/test/unit
-          pytest backend/test/integration
+          cd backend
+          pytest

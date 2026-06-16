@@ -4,13 +4,25 @@ describe('R8UC 1-3', () => {
 
     before(function () {
         cy.fixture('../../test/gui/fixtures/user.json').then((user) => {
+            email = user.email;
             cy.request({
-                method: 'POST',
-                url: 'http://localhost:5000/users/create',
-                form: true,
-                body: user
+                method: 'GET',
+                url: `http://localhost:5000/users/all`,
             }).then((response) => {
-                email = user.email;
+                const users = response.body.filter(u => u.email === email);
+                users.forEach(u => {
+                    cy.request({
+                        method: 'DELETE',
+                        url: `http://localhost:5000/users/${u._id.$oid}`
+                    });
+                });
+            }).then(() => {
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:5000/users/create',
+                    form: true,
+                    body: user
+                });
             });
         });
     });
@@ -24,6 +36,21 @@ describe('R8UC 1-3', () => {
         cy.get('input[value="Create new Task"]').click();
 
         cy.get('.container-element a').contains('New Task').click();
+    });
+
+
+    after(function () {
+        cy.request({
+            method: 'GET',
+            url: `http://localhost:5000/users/bymail/${email}`
+        }).then((response) => {
+            const userID = response.body._id.$oid;
+            
+            cy.request({
+                method: 'DELETE',
+                url: `http://localhost:5000/users/${userID}`
+            });
+        });
     });
 
     // R8UC1: Create To-do

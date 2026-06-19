@@ -124,3 +124,19 @@ def test_create_no_email(daoObj):
     # Act/Assert
     with pytest.raises(WriteError):
         daoObj.create(data)
+
+
+@pytest.mark.integration
+def test_create_valid_data_missing_lastname(daoObj):
+
+    # Arrange
+    data = {
+        'firstName': 'Jakob',
+        'email': 'jakob@hotmail.com'
+    }
+
+    # Act
+    res = daoObj.create(data)
+
+    # Assert
+    assert res is not None

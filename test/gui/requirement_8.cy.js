@@ -2,19 +2,34 @@ describe('R8UC 1-3', () => {
 
     let email;
 
+    let userID;
+
     before(function () {
         cy.fixture('../../test/gui/fixtures/user.json').then((user) => {
             email = user.email;
             cy.request({
-                method: 'DELETE',
+                method: 'GET',
                 url: `http://localhost:5000/users/bymail/${email}`,
                 failOnStatusCode: false
+            }).then((response) => {
+                if (response.body && response.body._id) {
+                    const oldID = response.body._id.$oid;
+                    cy.request({
+                        method: 'DELETE',
+                        url: `http://localhost:5000/users/${oldID}`,
+                        failOnStatusCode: false
+                    });
+                }
             }).then(() => {
                 cy.request({
                     method: 'POST',
                     url: 'http://localhost:5000/users/create',
                     form: true,
                     body: user
+                }).then((response) => {
+                    if (response.body && response.body._id) {
+                        userID = response.body._id.$oid;
+                    }
                 });
             });
         });
@@ -97,10 +112,10 @@ describe('R8UC 1-3', () => {
     });
 
     after(function () {
-        if (email) {
+        if (userID) {
             cy.request({
                 method: 'DELETE',
-                url: `http://localhost:5000/users/bymail/${email}`,
+                url: `http://localhost:5000/users/${userID}`,
                 failOnStatusCode: false
             });
         }

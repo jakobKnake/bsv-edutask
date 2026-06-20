@@ -6,16 +6,9 @@ describe('R8UC 1-3', () => {
         cy.fixture('../../test/gui/fixtures/user.json').then((user) => {
             email = user.email;
             cy.request({
-                method: 'GET',
-                url: `http://localhost:5000/users/all`,
-            }).then((response) => {
-                const users = response.body.filter(u => u.email === email);
-                users.forEach(u => {
-                    cy.request({
-                        method: 'DELETE',
-                        url: `http://localhost:5000/users/${u._id.$oid}`
-                    });
-                });
+                method: 'DELETE',
+                url: `http://localhost:5000/users/bymail/${email}`,
+                failOnStatusCode: false
             }).then(() => {
                 cy.request({
                     method: 'POST',
@@ -38,21 +31,6 @@ describe('R8UC 1-3', () => {
         cy.get('.container-element a').contains('New Task').click();
     });
 
-
-    after(function () {
-        cy.request({
-            method: 'GET',
-            url: `http://localhost:5000/users/bymail/${email}`
-        }).then((response) => {
-            const userID = response.body._id.$oid;
-            
-            cy.request({
-                method: 'DELETE',
-                url: `http://localhost:5000/users/${userID}`
-            });
-        });
-    });
-
     // R8UC1: Create To-do
     it('Add button is disabled for empty input', () => {
 
@@ -71,7 +49,6 @@ describe('R8UC 1-3', () => {
 
         cy.get('.todo-list li.todo-item').last().should('contain.text', todoText);
     });
-
 
     //R8UC2: Toggle To-do
     it('Item is struck through when changed from Active to Done', () => {
@@ -117,6 +94,15 @@ describe('R8UC 1-3', () => {
         cy.reload();
 
         cy.contains('.todo-list li.todo-item', todoText).should('not.exist');
-        });
-        
+    });
+
+    after(function () {
+        if (email) {
+            cy.request({
+                method: 'DELETE',
+                url: `http://localhost:5000/users/bymail/${email}`,
+                failOnStatusCode: false
+            });
+        }
+    });
 });

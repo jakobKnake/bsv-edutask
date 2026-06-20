@@ -4,13 +4,18 @@ describe('R8UC 1-3', () => {
 
     before(function () {
         cy.fixture('../../test/gui/fixtures/user.json').then((user) => {
+            email = user.email;
             cy.request({
-                method: 'POST',
-                url: 'http://localhost:5000/users/create',
-                form: true,
-                body: user
-            }).then((response) => {
-                email = user.email;
+                method: 'DELETE',
+                url: `http://localhost:5000/users/bymail/${email}`,
+                failOnStatusCode: false
+            }).then(() => {
+                cy.request({
+                    method: 'POST',
+                    url: 'http://localhost:5000/users/create',
+                    form: true,
+                    body: user
+                });
             });
         });
     });
@@ -44,7 +49,6 @@ describe('R8UC 1-3', () => {
 
         cy.get('.todo-list li.todo-item').last().should('contain.text', todoText);
     });
-
 
     //R8UC2: Toggle To-do
     it('Item is struck through when changed from Active to Done', () => {
@@ -90,6 +94,15 @@ describe('R8UC 1-3', () => {
         cy.reload();
 
         cy.contains('.todo-list li.todo-item', todoText).should('not.exist');
-        });
-        
+    });
+
+    after(function () {
+        if (email) {
+            cy.request({
+                method: 'DELETE',
+                url: `http://localhost:5000/users/bymail/${email}`,
+                failOnStatusCode: false
+            });
+        }
+    });
 });

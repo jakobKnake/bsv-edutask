@@ -18,13 +18,20 @@ def test_getUserByEmail_invalid_email(daoMock):
         daoMock.get_user_by_email("user.com")
 
 @pytest.mark.unit
+def test_getUserByEmail_invalid_email_single_at_sign(daoMock):
+
+    with pytest.raises(ValueError):
+        daoMock.get_user_by_email("@")
+
+
+@pytest.mark.unit
 def test_getUserByEmail_empty_email(daoMock):
 
     with pytest.raises(ValueError):
         daoMock.get_user_by_email("")
 
 @pytest.mark.unit
-def test_getUserByEmail_zero_users(daoMock, capsys):
+def test_getUserByEmail_zero_users(daoMock):
     # Mock find user from dao - return empty list
     daoMock.dao.find.return_value = []
 
@@ -54,7 +61,7 @@ def test_getUserByEmail_valid_oneUser(daoMock):
     assert res == expected
 
 @pytest.mark.unit
-def test_getUserByEmail_valid_moreUsers(daoMock, capsys):
+def test_getUserByEmail_valid_moreUsers(daoMock):
     expected = {"email": "user@hotmail.com"}
     # Mock find user from dao
     daoMock.dao.find.return_value = [{"email": "user@hotmail.com"}, {"email": "user@hotmail.com"}]
